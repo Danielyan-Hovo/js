@@ -1,5 +1,5 @@
 let fs = require('fs');
-
+let Matrix = require('./matrix.js')
 
 const diagonal = (n, a) => {
 	for(let i=0; i<n; i++)
@@ -34,4 +34,21 @@ const gaus = (n, a) => {
         return x;
 }
 module.exports = gaus
+
+let mat = new Matrix(3,4);
+let arr1 = new Matrix(5);
+let arr2 = new Matrix(3)
+let arr3 = new Matrix(2)
+let arr4 = new Matrix(1)
+arr1.init('input.txt')
+arr2.init('input.txt')
+arr3.init('input.txt')
+arr4.init('input.txt')
+arr1.diagonal()
+arr2.diagonal()
+arr3.diagonal()
+console.log(arr1.matrix)
+console.log(arr2.matrix)
+console.log(arr3.matrix)
+console.log(arr4.matrix)
 

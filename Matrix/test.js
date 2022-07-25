@@ -25,7 +25,7 @@ const ll = (data) => {
         let g = fs.readFileSync('golden.txt','utf-8');
 	console.log(ll(g))
 	ll(input).forEach((el)=>{
-		console.log(el)
+		//console.log(el)
                 console.log(gaus(el.length,el))
                 fs.appendFileSync('exit.txt',gaus(el.length,el).join(' ')+'\n',()=>{})
         })
