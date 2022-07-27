@@ -1,6 +1,5 @@
 #include <cmath>
 #include <vector>
-//quadrate file
 
 
 float d_sovorakan(float a, float b, float c){

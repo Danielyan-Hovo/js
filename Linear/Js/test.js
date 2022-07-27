@@ -1,25 +1,5 @@
-let fs = require('fs');
-
-const disc = (a, b, c) => b*b-4*a*c;
-
-const quadrate = (a, b, c) => {
-	let d = disc(a, b, c)
-	if (a === 0 && b === 0 && c === 0){
-   		return Infinity;
-  	}
-  	else if (d < 0){
-    		return NaN;
-  	}else if (d == 0){
-    		return Math.round(((- b - Math.sqrt(d)) / (2 * a))*100)/100;
-  	}else if (d > 0){
-  		let arr = [];
-    		arr.push(Math.round(((- b + Math.sqrt(d)) / (2 * a))*100)/100)
-     		arr.push(Math.round(((- b - Math.sqrt(d)) / (2 * a))*100)/100)
-     		return arr;
-  }
-}
-module.exports = quadrate
-
+let fs = require('fs')
+let linear = require('./linear.js')
 
 const validate_input = (file) => {
         fs.truncate('exit.txt',() => {})
@@ -39,7 +19,7 @@ const validate_input = (file) => {
                 line_count++
                 line.split(' ').forEach((item) => {
                         if (isNaN(+item)) {
-                                err =`Error in line ${line_count} ${file}:  "`+item+'" is not a Number\n'
+                                err =`Error in line ${line_count} ${file}:  `+item+' is not a Number\n'
                                 fs.appendFile('exit.txt',err,() => {})
                                 bool = false
                         }
@@ -48,19 +28,31 @@ const validate_input = (file) => {
         return bool;
 }
 
-const run = () => {
+
+
+const test = () => {
         fs.truncate('exit.txt',() => {})
-        let input = fs.readFileSync('input.txt','utf-8');
+        fs.truncate('result.txt', () => {})
+        let input = fs.readFileSync('test_input.txt','utf-8');
         let data = input.split('\n').map((i) => {return i.split(' ').map((j) => {return +j})})
-        data.pop()
+	data.pop()
+	let golden = fs.readFileSync('golden.txt','utf-8').split('\n').map((i) => {return +i})
+	golden.pop()
+	let procent = 100;
         let temp
         for(let i=0;i<data.length; i++){
-                temp = quadrate(data[i][0],data[i][1],data[i][2])
+                temp = linear(data[i][0],data[i][1])
                 fs.appendFile('exit.txt',temp.toString()+'\n',()=>{})
+                if(temp === golden[i]){
+                        fs.appendFile('result.txt',`Test${i+1}:  ${temp} = ${golden[i]}  result: passed\n`,()=>{})
+                } else {
+                        fs.appendFile('result.txt',`Test${i+1}:  ${temp} != ${golden[i]}  result: failed\n`,()=>{})
+                        procent -= 100/golden.length
+                }
         }
+	fs.appendFile('result.txt', `\n\nTests result: ${procent}%  ${procent>50?'Succesfully':'Failed'}\n` , ()=>{});
 }
 
-if(validate_input('input.txt')){
-        run();
+if(validate_input('test_input.txt')){
+        test();
 }
-

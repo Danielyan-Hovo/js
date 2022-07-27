@@ -7,7 +7,7 @@ module.exports = gcd
 
 
 const validate_input = (file) => {
-        fs.writeFileSync('exit.txt','',() => {})
+        fs.truncate('exit.txt',() => {})
         if(!fs.existsSync(file)){
                 fs.appendFile('exit.txt',`${file} file doesent exists!`,()=>{})
                 return false
@@ -35,7 +35,7 @@ const validate_input = (file) => {
 
 
 const run = () => {
-        fs.writeFileSync('exit.txt','',() => {})
+        fs.truncate('exit.txt',() => {})
         let input = fs.readFileSync('input.txt','utf-8');
         let data = input.split('\r\n').map((i) => {return i.split(' ').map((j) => {return +j})})
         let temp

@@ -2,7 +2,7 @@ let fs = require('fs')
 let gcd = require('./gcd.js')
 
 const validate_input = (file) => {
-        fs.writeFile('exit.txt','',() => {})
+        fs.truncate('exit.txt',() => {})
         if(!fs.existsSync(file)){
                 fs.appendFile('exit.txt',`${file} file doesent exists!`,()=>{})
                 return false

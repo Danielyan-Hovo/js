@@ -1,9 +1,8 @@
-#tcl qarakusayin
 proc main {} {
-    set outputfile [open "exitQarakusayin.txt" w+]
-    set inputfile [open "inputQarakusayin.txt" r]
-    set goldenfile [open "goldenQarakusayin.txt" r]
-    set resultsfile [open "resultsQarakusayin.txt" w+]
+    set outputfile [open "exit.txt" w+]
+    set inputfile [open "input.txt" r]
+    set goldenfile [open "golden.txt" r]
+    set resultsfile [open "result.txt" w+]
     getInput $outputfile $inputfile $goldenfile $resultsfile
     close $outputfile
     close $inputfile
@@ -45,7 +44,7 @@ proc kentD {a b c} {
 	}
 }
 
-proc qarakusayin {a b c} {
+proc quadrate {a b c} {
     set b1 [expr $b%2]
     if {$b1==0} {
 	return [zuygD $a $b $c]
@@ -65,8 +64,8 @@ proc getInput {outputfile inputfile goldenfile resultsfile} {
 	set a [lindex $inputs $i 0]
 	set b [lindex $inputs $i 1]
 	set c [lindex $inputs $i 2]
-	lappend results [qarakusayin $a $b $c]
-	puts $outputfile [qarakusayin $a $b $c]
+	lappend results [quadrate $a $b $c]
+	puts $outputfile [quadrate $a $b $c]
     }
     while {[eof $goldenfile] != 1} {
 	lappend goldens [gets $goldenfile]

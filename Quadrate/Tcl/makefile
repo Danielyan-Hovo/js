@@ -1,5 +1,6 @@
-test:qarakusayin.tcl
-	@tclsh qarakusayin.tcl
+test: quadrate.tcl
+	@tclsh quadrate.tcl
+	@echo "Testing..."
 
 clean:
-	@rm exitQarakusayin.txt resultsQarakusayin.txt
+	@rm exit.txt result.txt
