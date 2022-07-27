@@ -1,66 +1,102 @@
 let fs = require('fs');
+let Matrix = require('./matrix.js')
 
-const jacobi = (n, data, p) => {
-	const eps = 0.001;
-	let answer = '';
-	let mat = Array.from(Array(n), () => new Array(n+1));
-	let curr = new Array(n);
-	let prev = new Array(n);
-	for(let i = 0; i<n; i++){
-		curr[i] =0, prev[i] =0;
-		for(let j = 0; j<=n; ++j){
-			mat[i][j] = Number(data[p]);
-			p++;
-		}
-	}
-	let maxi = 0;
-	let iter = 0;
-	let for_exit = true;
-	while(for_exit){
-		for(let i =0;i<n;i++){
-			curr[i] = mat[i][n];
-			for(let j =0; j<n; j++){
-				if(j!==i)
-					curr[i] -= prev[j] *mat[i][j];
-				else
-					continue;
-			}
-			curr[i] /= mat[i][i];
-		}
-		iter++;
-		answer +='Ireation ' + iter + '     ';
-		let count = 0;
-		for(let i =0; i<n;i++){
-			maxi = curr[i] - prev[i];
-			if(Math.abs(maxi) <= eps)
-				count++;
-			if(count >= n){
-				for_exit = false;
-				console.log(111)
-			}
-			else if(iter > 30){
-				for_exit = false;
-				console.log('lucum chuni\n');
-			}
-				prev[i] = curr[i];
-				answer +=Math.round(prev[i]*10000)/10000+'   ';
-		}
-		answer +='\n';
-	}
-	fs.appendFile('exit.txt',answer+'\n', () =>{});
+const validate_input = (file) => {
+        fs.writeFile('exit.txt','',() => {})
+        if(!fs.existsSync(file)){
+                fs.appendFile('exit.txt',`${file} file doesent exists!`,()=>{})
+                return false
+        }
+        let data = fs.readFileSync(file,'utf-8')
+        if(data.length === 0){
+                fs.appendFile('exit.txt',`${file} file is empty!`,()=>{})
+                return false
+        }
+        let err = ''
+        let bool = true
+        let line_count = 0
+	data.split(/\r?\n/).forEach(line =>  {
+                line_count++
+                line.split(' ').forEach((item) => {
+                        if (isNaN(+item)) {
+                                err =`Error in line ${line_count} ${file}:  `+item+' is not a Number\n'
+                                fs.appendFile('exit.txt',err,() => {})
+                                bool = false
+                        }
+                })
+	});
+        return bool;
 }
 
 
-(function () {
-	let input = fs.readFileSync('input.txt','utf-8');
-	fs.writeFile('exit.txt', '', ()=>{});
-	let data = input.split('\r\n').join(' ').split(' ');
-	let i =0;
-	let n = Number(data[i]);
-	jacobi(n, data, i+1);
-	i = n*(n+1);
-	n = Number(data[i+1]);
-	jacobi(n, data, i+2);
-})();
+const jacobi = (arr) => {
+	const eps = 0.00001;
+	let curr = new Array(arr.row).fill(0);
+	let prev = new Array(arr.row).fill(0);
+	let maxi = 0;
+	let iter = 0;
+	let applicable = true;
+	let for_exit = true;
+	while (for_exit) {
+		for (let i =0; i<arr.row; i++) {
+			curr[i] = arr.get(i,arr.row);
+			for (let j =0; j<arr.row; j++) {
+				if (j!==i) {
+					curr[i] -= prev[j] * arr.get(i,j);
+                                } else {
+					continue;
+                                }
+			}
+			curr[i] /= arr.get(i,i);
+		}
+		iter++;
+		let count = 0;
+		for (let i =0; i<arr.row; i++) {
+			maxi = curr[i] - prev[i];
+			if (Math.abs(maxi) <= eps) {
+				count++;
+                        }
+			if (count >= arr.row) {
+				for_exit = false;
+			}
+			else if (iter > 30) {
+				for_exit = false;
+				applicable = false
+			}
+			prev[i] = curr[i];
+		}
+	}
+        prev = prev.map((item) => {return Math.round(item*100000)/100000})
+        if(applicable){
+       	return prev
+	   } else {
+	   	return "Matrix can't  applicable for Jacobi method!"
+	   }
+}
+module.exports = jacobi
 
+
+
+function  run() {
+	fs.writeFile('exit.txt', '', ()=>{});
+        let count = 0;
+        while (true) {
+                let arr = new Matrix(5)
+                arr.init('input.txt')
+                if (arr.matrix !== undefined) {
+                        count++
+                        if (typeof jacobi(arr) === 'string') {
+                                fs.appendFileSync('exit.txt', jacobi(arr)+'\n', ()=>{})
+                        } else {
+                                fs.appendFileSync('exit.txt', jacobi(arr).join('\t\t')+'\n')
+                        }
+                } else {
+                        break
+                }
+        }
+}
+
+if(validate_input('input.txt')){
+        run()
+}
 

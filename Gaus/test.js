@@ -1,46 +1,56 @@
 let fs = require('fs');
 let gaus = require('./gaus.js')
+let Matrix = require('./matrix.js')
 
-const ll = (data) => {
-        let arr = []
-        data.split('\r\n\r\n').map((el)=>{arr.push(el.split('\r\n').map((it)=>{
-        return it.split(' ')}))})
-        let p = [];
-        for(let i=0; i<arr.length;i++){
-                p.push([])
-                for(let j=0;j<arr[i].length;j++){
-                        p[i].push([])
-                        for(let k=0; k<arr[i][j].length;k++){
-                                p[i][j].push(Number(arr[i][j][k]))
-                        }
-                }
+const validate_input = (file) => {
+        fs.writeFile('exit.txt','',() => {})
+        if(!fs.existsSync(file)){
+                fs.appendFile('exit.txt',`${file} file doesent exists!`,()=>{})
+                return false
         }
-        return p
+        let data = fs.readFileSync(file,'utf-8')
+        if(data.length === 0){
+                fs.appendFile('exit.txt',`${file} file is empty!`,()=>{})
+                return false
+        }
+        let err = ''
+        let bool = true
+        let line_count = 0
+	data.split(/\r?\n/).forEach(line =>  {
+                line_count++
+                line.split(' ').forEach((item) => {
+                        if (isNaN(+item)) {
+                                err =`Error in line ${line_count} ${file}:  `+item+' is not a Number\n'
+                                fs.appendFile('exit.txt',err,() => {})
+                                bool = false
+                        }
+                })
+	});
+        return bool;
 }
 
-(function () {
+function test() {
 	fs.writeFile('exit.txt', '', ()=>{});
-	let input = fs.readFileSync('input.txt','utf-8');
-        let ex
-        let g = fs.readFileSync('golden.txt','utf-8');
-	console.log(ll(g))
-	ll(input).forEach((el)=>{
-		console.log(el)
-                console.log(gaus(el.length,el))
-                fs.appendFileSync('exit.txt',gaus(el.length,el).join(' ')+'\n',()=>{})
-        })
-})()
-
-
-
-//let golden = g.split('\n');
-
-//let length = golden.length;
-//let result = '';
-//for(let i = 0; i < length-1; i++){
-//	if(exit[i] === golden[i])
-//		result += `Test ${i+1}   passed Succesfully <3\n`;
-//	else
-//		result += `Test  ${i+1}  failed !!!\n`;
-//}
-//fs.writeFile('result.txt', result,()=> console.log('Testing'));
+        fs.writeFile('result.txt','',()=>{});
+        let count = 0;
+        let golden = fs.readFileSync('golden.txt','utf-8').split('\n');
+        while(true){
+                let arr = new Matrix(5)
+                arr.init('test_input.txt')
+                if(arr.matrix !== undefined){
+                        fs.appendFileSync('exit.txt', gaus(arr).join('   ')+'\n',()=>{})
+                        if(golden[count] === gaus(arr).join('   ')){
+                                count++
+                                fs.appendFileSync('result.txt','Test '+count+' passed\n',()=>{})
+                        } else {
+                                count++
+                                fs.appendFileSync('result.txt','Test '+count+' failed!\n',()=>{})
+                        }
+                } else{
+                        break
+                }
+        }
+}
+if(validate_input('test_input.txt')){
+        test()
+}

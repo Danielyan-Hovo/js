@@ -1,19 +1,21 @@
 let fs = require('fs');
-let o=0;
+let iter = 0;
 
 class Matrix {
 	constructor(...size) {
-		if(size.length === 2){
+			if (size[0] instanceof Matrix){
+                        this.matrix = size[0].matrix
+                        this.row = size[0].row
+                        this.col = size[0].col
+                        } else if (!Array.isArray(size[0])) {
 			this.row = size[0];
-			this.col = size[1];
+			this.col = size[1]?size[1]:size[0];
 			this.matrix = Array.from(Array(this.row), () => new Array(this.col).fill(2));
-			//console.log(Array.from(Array(this.row), () => new Array(this.col).fill(2)));
-		} else if (size.length === 1) {
-			this.row = size[0];
-			this.col = size[0];
-			this.matrix = Array.from(Array(this.row), () => new Array(this.col).fill(4));
-			//console.log(Array.from(Array(this.row), () => new Array(this.col).fill(4)));
-		}
+			} else if (Array.isArray(size[0])&& !(size[0] instanceof Matrix)){
+                        this.matrix = size[0]
+                        this.row = this.matrix.length
+                        this.col = this.matrix[0].length
+                }
 	}
 	diagonal(){
 		let a = this.matrix;
@@ -34,7 +36,7 @@ class Matrix {
 			}
 		this.matrix =a;
 	}
-	
+
 	init(file){
 		let data = fs.readFileSync(file,'utf-8');
         	let arr = []
@@ -50,28 +52,42 @@ class Matrix {
                         	}
                 	}
         	}
-       		this.matrix = p[o]
-		o++
+       		this.matrix = p[iter]
+       		if(p[iter]){
+       			this.row = p[iter].length
+       			this.col = p[iter][0].length
+       		}
+		iter++
 	}
-	//init_file(
-	
+
+        print() {
+                console.log(this.matrix)
+        }
+
+        get(i,j){
+                return this.matrix[i][j]
+        }
+
+        set(i,j,value){
+                this.matrix[i][j] = value
+        }
+
 }
 module.exports = Matrix;
 /*
-let mat = new Matrix(3,4);
 let arr1 = new Matrix(5);
 let arr2 = new Matrix(3)
 let arr3 = new Matrix(2)
-let arr4 = new Matrix(1)
 arr1.init('input.txt')
 arr2.init('input.txt')
 arr3.init('input.txt')
-arr4.init('input.txt')
 arr1.diagonal()
 arr2.diagonal()
 arr3.diagonal()
-//arr4.diagonal()
 console.log(arr1.matrix)
 console.log(arr2.matrix)
 console.log(arr3.matrix)
-console.log(arr4.matrix)*/
+let mat = new Matrix([[1,2,3],[2,3,4],[3,4,5],[4,5,6],[5,6,7],[6,7,8]])
+mat.print()
+mat.set(5,2,111)
+console.log(mat.get(5,2))*/
