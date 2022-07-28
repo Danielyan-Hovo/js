@@ -1,4 +1,4 @@
-Gold:  14 30 45 10 23 1 2 1 66 1 {}
+Golden:  14 30 45 10 23 1 2 1 66 1
 Values:  14 30 45 10 23 1 2 1 66 1
 
 Test passed Succesfully!

@@ -1,5 +1,3 @@
-#Gcd tcl
-
 proc main {} {
     getInput
 }
@@ -18,8 +16,8 @@ proc gcd {a b} {
 }
 
 proc getInput {} {
-set inputfile [open "inputGcd.txt" r]
-set outputfile [open "exitGcd.txt" w+]
+set inputfile [open "input.txt" r]
+set outputfile [open "exit.txt" w+]
 while {[eof $inputfile] !=1} {
 	lappend inputs [gets $inputfile]
 	}
@@ -30,21 +28,21 @@ while {[eof $inputfile] !=1} {
 		set b [lindex $inputs $i 1]
 		lappend results [gcd $a $b]
 		puts $outputfile [gcd $a $b]
-	} 
-	set goldenFile [open "goldenGcd.txt" r]
+	}
+	set goldenFile [open "golden.txt" r]
 	while {[eof $goldenFile] != 1} {
 		lappend goldens [gets $goldenFile]
 	}
 	close $goldenFile
-	set resultsfile [open "resultsGcd.txt" w+]
+	set resultsfile [open "result.txt" w+]
 	set procent 100
-	puts $resultsfile "Gold:  $goldens"
+	puts $resultsfile "Golden:  $goldens"
 	puts $resultsfile "Values:  $results"
 	for {set i 0 } {$i < [expr $length -1]} {incr i} {
 		if {[lindex $results $i] != [lindex $goldens $i]} {
 			set procent [expr {$procent-10}]
-			puts $resultsfile "Exercises [expr $i + 1] is wrong"
-		}	
+			puts $resultsfile "Test [expr $i + 1] is wrong"
+		}
 	}
 	if {$procent>=50} {
 		puts $resultsfile "\nTest passed Succesfully!\n Tests Result: $procent %"
@@ -53,3 +51,4 @@ while {[eof $inputfile] !=1} {
 }
 
 main
+
